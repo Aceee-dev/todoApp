@@ -6,26 +6,35 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var todoAdapter : TodoAdapter
+    private lateinit var mTodoAdapter: TodoAdapter
+    private lateinit var mMutableListOfToDos: MutableList<Todo>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mMutableListOfToDos =
+            if (savedInstanceState != null) savedInstanceState.getParcelableArrayList("todolist")!!
+            else mutableListOf()
         setContentView(R.layout.activity_main)
-        todoAdapter = TodoAdapter(mutableListOf())
+        mTodoAdapter = TodoAdapter(mMutableListOfToDos)
 
-        rvToDoItem.adapter = todoAdapter
+        rvToDoItem.adapter = mTodoAdapter
         rvToDoItem.layoutManager = LinearLayoutManager(this)
 
         btnAddTodo.setOnClickListener {
             val todoTitle = etToDoTitle.text.toString()
-            if(todoTitle.isNotEmpty()) {
+            if (todoTitle.isNotEmpty()) {
                 val todo = Todo(todoTitle)
-                todoAdapter.addToDo(todo)
+                mTodoAdapter.addToDo(todo)
                 etToDoTitle.text.clear()
             }
         }
         btnDeleteTodo.setOnClickListener {
-            todoAdapter.doneToDos()
+            mTodoAdapter.doneToDos()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelableArrayList("todolist", ArrayList(mMutableListOfToDos));
     }
 }

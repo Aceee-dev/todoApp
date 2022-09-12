@@ -10,15 +10,15 @@ import kotlinx.android.synthetic.main.item_todo.view.*
 
 class TodoAdapter(
     private val todos: MutableList<Todo>
-) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>(){
+) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
 
-     fun addToDo(todo: Todo) {
-         todos.add(todo)
-         notifyItemInserted(todos.size-1)
-     }
+    fun addToDo(todo: Todo) {
+        todos.add(todo)
+        notifyItemInserted(todos.size - 1)
+    }
 
     fun doneToDos() {
-        todos.removeAll{ todo ->
+        todos.removeAll { todo ->
             todo.isChecked
         }
         notifyDataSetChanged()
@@ -34,8 +34,8 @@ class TodoAdapter(
         )
     }
 
-    private fun toggleCompleteStatus(todoTextView: TextView, isChecked:Boolean) {
-        if(isChecked) {
+    private fun toggleCompleteStatus(todoTextView: TextView, isChecked: Boolean) {
+        if (isChecked) {
             todoTextView.paintFlags = todoTextView.paintFlags or STRIKE_THRU_TEXT_FLAG
         } else {
             todoTextView.paintFlags = todoTextView.paintFlags and STRIKE_THRU_TEXT_FLAG.inv()
@@ -47,9 +47,9 @@ class TodoAdapter(
         holder.itemView.apply {
             tvTodoTitle.text = curTodo.title
             cbTodoDone.isChecked = curTodo.isChecked
-            toggleCompleteStatus(tvTodoTitle,curTodo.isChecked)
+            toggleCompleteStatus(tvTodoTitle, curTodo.isChecked)
             cbTodoDone.setOnCheckedChangeListener { _, isChecked ->
-                toggleCompleteStatus(tvTodoTitle,isChecked)
+                toggleCompleteStatus(tvTodoTitle, isChecked)
                 curTodo.isChecked = !curTodo.isChecked
             }
         }
