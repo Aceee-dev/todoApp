@@ -1,16 +1,14 @@
 package com.example.todoApp
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.lifecycle.LiveData
+import androidx.room.*
 
 @Dao
 interface TodoDao {
     @Query("SELECT * FROM todo")
-    suspend fun getAllTodo(): MutableList<Todo>
+    fun getAllTodo(): LiveData<MutableList<Todo>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(todo: Todo)
 
     @Delete
