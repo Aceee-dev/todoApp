@@ -7,26 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_todo.view.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 
 class TodoAdapter(
     private val todos: MutableList<Todo>
 ) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
-
-    private lateinit var tododb: TodoDatabase
-
-    fun setDB(db: TodoDatabase) {
-        tododb = db
-    }
-
-    fun addToDo(todo: Todo) {
-        todos.add(todo)
-        GlobalScope.launch(Dispatchers.IO) { tododb.toDoDao().insert(todo) }
-        notifyItemInserted(todos.size - 1)
-    }
 
     // below method is use to update our list of notes.
     fun updateList(newList: MutableList<Todo>) {
@@ -41,20 +26,14 @@ class TodoAdapter(
         notifyDataSetChanged()
     }
 
-    fun doneToDos(view: View) {
-        val tidList: ArrayList<Todo> = arrayListOf()
+    fun getTodoDeleteList(): ArrayList<Todo> {
+        val list: ArrayList<Todo> = arrayListOf()
         for (todo in todos) {
             if (todo.isChecked) {
-                tidList.add(todo)
-                GlobalScope.launch(Dispatchers.IO) {
-                    tododb.toDoDao().delete(todo)
-                }
+                list.add(todo)
             }
         }
-        for (todo in tidList) {
-            todos.remove(todo)
-        }
-        notifyDataSetChanged()
+        return list
     }
 
     class TodoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
