@@ -3,4 +3,7 @@
     <string name="toDoTitleString">Enter Todo Title</string>
     <string name="addTodo">Add Todo</string>
     <string name="deleteToDo">Delete Todo</string>
+    <string name="Todo">Todo</string>
+    <string name="About">About</string>
+    <string name="Search">Search</string>
 </resources>
