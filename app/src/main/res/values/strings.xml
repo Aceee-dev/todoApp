@@ -6,4 +6,16 @@
     <string name="Todo">Todo</string>
     <string name="About">About</string>
     <string name="Search">Search</string>
+    <string name="save">Save</string>
+    <string name="priority">Priority</string>
+    <string name="completion_date">Completion Date(dd-mm-yyyy)</string>
+    <string name="description">Description</string>
+    <string-array name="Priority">
+        <item>Priority</item>
+        <item>P1(Highest)</item>
+        <item>P2</item>
+        <item>P3</item>
+        <item>P4</item>
+        <item>P5(Least)</item>
+    </string-array>
 </resources>

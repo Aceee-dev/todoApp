@@ -1,5 +1,6 @@
 package com.example.todoApp
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -22,7 +23,14 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(tbMenuAppBar)
         supportActionBar?.title = getString(R.string.Todo)
 
-        mTodoAdapter = TodoAdapter(mutableListOf())
+        mTodoAdapter = TodoAdapter(mutableListOf(), object : TodoAdapter.OnItemClickListener {
+            override fun onItemClick(item: Todo?) {
+                // send data to edit screen using bundle
+                val intent = Intent(this@MainActivity, EditActivity::class.java)
+                intent.putExtra("EDIT_DATA", item)
+                startActivity(intent)
+            }
+        })
         rvToDoItem.adapter = mTodoAdapter
 
         rvToDoItem.layoutManager = LinearLayoutManager(this)
@@ -33,20 +41,25 @@ class MainActivity : AppCompatActivity() {
         ).get(TodoViewModel::class.java)
 
         btnAddTodo.setOnClickListener {
-            val todoTitle = etToDoTitle.text.toString()
-            if (todoTitle.isNotEmpty()) {
-                val todo = Todo(title = todoTitle)
-                mTodoViewModel.insert(todo)
-                etToDoTitle.text.clear()
-            }
+            // Trigger edit activity
+            val intent = Intent(this@MainActivity, EditActivity::class.java)
+            startActivity(intent)
         }
+
         btnDeleteTodo.setOnClickListener {
             val todoDeleteList = mTodoAdapter.getTodoDeleteList()
             for (todo in todoDeleteList) {
                 mTodoViewModel.delete(todo)
             }
         }
+    }
 
+    override fun onStart() {
+        super.onStart()
+        updateRecyclerViewWithData()
+    }
+
+    private fun updateRecyclerViewWithData() {
         // put observer on live data
         mTodoViewModel.getAllTodos().observe(this, Observer { list ->
             list?.let {

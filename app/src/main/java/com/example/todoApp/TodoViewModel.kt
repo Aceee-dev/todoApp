@@ -22,6 +22,10 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
         mtodoRepository.delete(todo)
     }
 
+    fun update(todo: Todo) {
+        mtodoRepository.update(todo)
+    }
+
     fun getAllTodos(): LiveData<MutableList<Todo>> {
         return mAllTodos;
     }
