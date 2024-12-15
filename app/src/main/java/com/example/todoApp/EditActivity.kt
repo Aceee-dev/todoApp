@@ -1,5 +1,6 @@
 package com.example.todoApp
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -87,6 +88,11 @@ class EditActivity : AppCompatActivity() {
             editTextDescription.setText(todoData.description)
             editTextDateTodo.setText(todoData.completion_date)
             spinnerPriorityList.setSelection(todoData.priority)
+        } else {
+            val calendar = Calendar.getInstance()
+            val currentDate =
+                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(calendar.time)
+            editTextDateTodo.setText(currentDate);
         }
 
         btnSaveTodo.setOnClickListener {
@@ -107,6 +113,26 @@ class EditActivity : AppCompatActivity() {
                     Snackbar.LENGTH_SHORT
                 ).show()
             }
+        }
+
+        editTextDateTodo.setOnClickListener {
+            // Get the current date
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            // Open DatePickerDialog
+            val datePickerDialog = DatePickerDialog(
+                this,
+                { _, selectedYear, selectedMonth, selectedDay ->
+                    // Handle selected date
+                    val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                    editTextDateTodo.setText(selectedDate);
+                },
+                year, month, day
+            )
+            datePickerDialog.show()
         }
     }
 

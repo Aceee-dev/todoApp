@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Funnel Shape -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M3,5h18c0.55,0 1,0.45 1,1 0,0.22 -0.07,0.43 -0.2,0.6L14,14.25v4.75c0,0.28 -0.11,0.53 -0.29,0.71l-3.42,3.42c-0.2,0.2 -0.45,0.31 -0.71,0.31 -0.55,0 -1,-0.45 -1,-1v-7.25L2.2,6.6C2.07,6.43 2,6.22 2,6c0,-0.55 0.45,-1 1,-1z" />
+</vector>
