@@ -2,6 +2,9 @@ package com.example.todoApp
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.animation.AlphaAnimation
@@ -11,8 +14,15 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,6 +48,12 @@ class MainActivity : AppCompatActivity() {
         searchCloseButton.setOnClickListener {
             exitSearchMode()
         }
+
+        // Debounce mechanism
+        // Create a flow to listen for text changes in the EditText
+        val searchFlow = searchEditText.textChangesFlow()
+            .debounce(500) // Wait for 500ms after the last keystroke (debounce)
+            .distinctUntilChanged() // Only emit if the text is different from the last emitted text
 
         mTodoAdapter = TodoAdapter(mutableListOf(), object : TodoAdapter.OnItemClickListener {
             override fun onItemClick(item: Todo?) {
@@ -68,6 +84,22 @@ class MainActivity : AppCompatActivity() {
                 mTodoViewModel.delete(todo)
             }
         }
+
+        lifecycleScope.launch { searchFlow.collect {
+                query -> mTodoViewModel.searchTodos(query)
+        }
+        }
+
+        lifecycleScope.launch { mTodoViewModel.searchResults.collect{
+                result ->
+            if(result.isEmpty()) {
+                Log.i("Anukul","result empty");
+                updateRecyclerViewWithData();
+            } else {
+                Log.i("Anukul","result "+result.toString());
+                mTodoAdapter.updateList(result)
+            }
+        } }
     }
 
     override fun onStart() {
@@ -136,6 +168,20 @@ class MainActivity : AppCompatActivity() {
             })
         }
         searchContainer.startAnimation(fadeOut)
+        updateRecyclerViewWithData()
     }
 
+    // Extension function to create a Flow of text changes from EditText
+    private fun EditText.textChangesFlow(): Flow<String> = callbackFlow {
+        val textWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                trySend(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        }
+        addTextChangedListener(textWatcher)
+        awaitClose { removeTextChangedListener(textWatcher) }
+    }
 }

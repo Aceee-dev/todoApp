@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Room
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class TodoRepository(private val context: Context) {
@@ -19,6 +20,10 @@ class TodoRepository(private val context: Context) {
 
     fun getAllTodos(): LiveData<MutableList<Todo>> {
         return mAllTodos
+    }
+
+    fun searchTodos(query:String): Flow<MutableList<Todo>> {
+        return mtodoDao.searchTodos(query);
     }
 
     @OptIn(DelicateCoroutinesApi::class)
