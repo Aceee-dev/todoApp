@@ -1,5 +1,6 @@
 package com.example.todoApp
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -14,8 +15,11 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.room.util.query
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -31,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchContainer: LinearLayout
     private lateinit var searchEditText: EditText
     private lateinit var searchCloseButton: ImageView
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +48,12 @@ class MainActivity : AppCompatActivity() {
         searchContainer = findViewById(R.id.search_container)
         searchEditText = findViewById(R.id.search_edit_text)
         searchCloseButton = findViewById(R.id.search_close_button)
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout)
+
+        swipeRefreshLayout.setOnRefreshListener {
+            // Your code to refresh data
+            refreshData()
+        }
 
         // Close search mode on close button click
         searchCloseButton.setOnClickListener {
@@ -87,33 +98,28 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch { searchFlow.collect {
                 query -> mTodoViewModel.searchTodos(query)
-        }
+            }
         }
 
         lifecycleScope.launch { mTodoViewModel.searchResults.collect{
                 result ->
-            if(result.isEmpty()) {
-                Log.i("Anukul","result empty");
-                updateRecyclerViewWithData();
-            } else {
-                Log.i("Anukul","result "+result.toString());
+                if(result.isEmpty()) {
+                    queryAllTodoList()
+                    return@collect
+                }
                 mTodoAdapter.updateList(result)
-            }
+        } }
+
+
+        lifecycleScope.launch { mTodoViewModel.allResults.collect{
+                result ->
+                mTodoAdapter.updateList(result)
+                swipeRefreshLayout.isRefreshing = false
         } }
     }
 
-    override fun onStart() {
-        super.onStart()
-        updateRecyclerViewWithData()
-    }
-
-    private fun updateRecyclerViewWithData() {
-        // put observer on live data
-        mTodoViewModel.getAllTodos().observe(this) { list ->
-            list?.let {
-                mTodoAdapter.updateList(it)
-            }
-        }
+    fun queryAllTodoList() {
+        mTodoViewModel.getAllTodos()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -168,7 +174,7 @@ class MainActivity : AppCompatActivity() {
             })
         }
         searchContainer.startAnimation(fadeOut)
-        updateRecyclerViewWithData()
+        queryAllTodoList()
     }
 
     // Extension function to create a Flow of text changes from EditText
@@ -183,5 +189,19 @@ class MainActivity : AppCompatActivity() {
         }
         addTextChangedListener(textWatcher)
         awaitClose { removeTextChangedListener(textWatcher) }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        queryAllTodoList()
+    }
+
+
+    private fun refreshData() {
+        swipeRefreshLayout.postDelayed({
+            // Update your data here
+           queryAllTodoList()
+            swipeRefreshLayout.isRefreshing = false
+        }, 2000)
     }
 }

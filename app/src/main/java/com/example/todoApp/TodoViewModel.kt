@@ -3,6 +3,7 @@ package com.example.todoApp
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,13 +12,13 @@ import kotlinx.coroutines.launch
 class TodoViewModel(application: Application) : AndroidViewModel(application) {
 
     private val mtodoRepository: TodoRepository
-    private val mAllTodos: LiveData<MutableList<Todo>>
     private val _searchResults = MutableStateFlow<MutableList<Todo>>(mutableListOf())
     val searchResults: StateFlow<MutableList<Todo>> = _searchResults
+    private val _allResults = MutableStateFlow<MutableList<Todo>>(mutableListOf())
+    val allResults: StateFlow<MutableList<Todo>> = _allResults
 
     init {
         mtodoRepository = TodoRepository(application)
-        mAllTodos = mtodoRepository.getAllTodos()
     }
 
     fun insert(todo: Todo) {
@@ -28,12 +29,16 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
         mtodoRepository.delete(todo)
     }
 
-    fun update(todo: Todo) {
-        mtodoRepository.update(todo)
+    fun update(oldtodo:Todo, todo: Todo) {
+        mtodoRepository.update(oldtodo, todo)
     }
 
-    fun getAllTodos(): LiveData<MutableList<Todo>> {
-        return mAllTodos;
+    fun getAllTodos() {
+        viewModelScope.launch {
+            mtodoRepository.getAllTodos().collect { todos ->
+                _allResults.value = todos
+            }
+        }
     }
 
     fun searchTodos(query:String) {

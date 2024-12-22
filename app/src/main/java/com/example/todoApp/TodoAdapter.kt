@@ -55,16 +55,19 @@ class TodoAdapter(
         todoTextView: TextView,
         tvTodoComplDate: TextView,
         tvTodoPriority: TextView,
+        tvTodoDescription: TextView,
         isChecked: Boolean
     ) {
         if (isChecked) {
             todoTextView.paintFlags = todoTextView.paintFlags or STRIKE_THRU_TEXT_FLAG
+            tvTodoDescription.paintFlags  = tvTodoDescription.paintFlags or STRIKE_THRU_TEXT_FLAG
             tvTodoComplDate.paintFlags = tvTodoComplDate.paintFlags or STRIKE_THRU_TEXT_FLAG
             tvTodoPriority.paintFlags = tvTodoPriority.paintFlags or STRIKE_THRU_TEXT_FLAG
         } else {
             todoTextView.paintFlags = todoTextView.paintFlags and STRIKE_THRU_TEXT_FLAG.inv()
             tvTodoComplDate.paintFlags = tvTodoComplDate.paintFlags and STRIKE_THRU_TEXT_FLAG.inv()
             tvTodoPriority.paintFlags = tvTodoPriority.paintFlags and STRIKE_THRU_TEXT_FLAG.inv()
+            tvTodoDescription.paintFlags  = tvTodoDescription.paintFlags and STRIKE_THRU_TEXT_FLAG.inv()
         }
     }
 
@@ -75,9 +78,10 @@ class TodoAdapter(
             tvTodoComplDate.text = curTodo.completion_date
             tvTodoPriority.text = curTodo.priority.toString()
             cbTodoDone.isChecked = curTodo.isChecked
-            toggleCompleteStatus(tvTodoTitle, tvTodoComplDate, tvTodoPriority, curTodo.isChecked)
+            tvTodoDescription.text = curTodo.description
+            toggleCompleteStatus(tvTodoTitle, tvTodoComplDate, tvTodoPriority, tvTodoDescription, curTodo.isChecked)
             cbTodoDone.setOnCheckedChangeListener { _, isChecked ->
-                toggleCompleteStatus(tvTodoTitle, tvTodoComplDate, tvTodoPriority, isChecked)
+                toggleCompleteStatus(tvTodoTitle, tvTodoComplDate, tvTodoPriority,tvTodoDescription, isChecked)
                 curTodo.isChecked = !curTodo.isChecked
             }
         }

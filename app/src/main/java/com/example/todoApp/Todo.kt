@@ -2,6 +2,7 @@ package com.example.todoApp
 
 import android.os.Parcelable
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -13,4 +14,7 @@ data class Todo(
     var description: String = "",
     var priority: Int = 4,
     var completion_date: String = ""
-) : Parcelable
+): Parcelable {
+    @PrimaryKey
+    var rowid: Long = 0
+}

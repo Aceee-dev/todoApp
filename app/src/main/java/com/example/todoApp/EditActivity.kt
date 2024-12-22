@@ -1,5 +1,6 @@
 package com.example.todoApp
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Color
@@ -102,10 +103,12 @@ class EditActivity : AppCompatActivity() {
                     mTodoViewModel.insert(createTodoInstance(title))
                 } else {
                     // call update
-                    mTodoViewModel.update(getUpdatedTodo(todoData, title))
+                    mTodoViewModel.update(todoData,createTodoInstance(title))
                 }
                 val intent = Intent(this, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 startActivity(intent)
+                finish()
             } else {
                 Snackbar.make(
                     this.findViewById(android.R.id.content),
@@ -134,14 +137,6 @@ class EditActivity : AppCompatActivity() {
             )
             datePickerDialog.show()
         }
-    }
-
-    private fun getUpdatedTodo(todo: Todo, title: String): Todo {
-        todo.title = title
-        todo.description = editTextDescription.text.toString()
-        todo.priority = spinnerPriorityList.selectedItemPosition
-        todo.completion_date = editTextDateTodo.text.toString()
-        return todo
     }
 
     private fun createTodoInstance(title: String): Todo {
