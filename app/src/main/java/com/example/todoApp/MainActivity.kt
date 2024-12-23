@@ -13,6 +13,7 @@ import android.view.animation.Animation
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.distinctUntilChanged
@@ -105,17 +106,18 @@ class MainActivity : AppCompatActivity() {
                 result ->
                 if(result.isEmpty()) {
                     queryAllTodoList()
-                    return@collect
+                } else {
+                    mTodoViewModel.updateAllResult(result)
                 }
-                mTodoAdapter.updateList(result)
         } }
 
 
-        lifecycleScope.launch { mTodoViewModel.allResults.collect{
+        lifecycleScope.launch {
+            mTodoViewModel.allResults.collect {
                 result ->
                 mTodoAdapter.updateList(result)
-                swipeRefreshLayout.isRefreshing = false
-        } }
+            }
+        }
     }
 
     fun queryAllTodoList() {
@@ -133,6 +135,10 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.search -> {
                 enterSearchMode()
+                true
+            }
+            R.id.filter -> {
+                showSortOptions()
                 true
             }
             R.id.about_info -> {
@@ -204,4 +210,34 @@ class MainActivity : AppCompatActivity() {
             swipeRefreshLayout.isRefreshing = false
         }, 2000)
     }
+
+    private fun showSortOptions() {
+        val popupMenu = PopupMenu(this, findViewById(R.id.filter), R.style.PopupMenuStyle)
+        popupMenu.menu.add("Sort by Priority")
+        popupMenu.menu.add("Sort by Date")
+
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.title) {
+                "Sort by Priority" -> {
+                    sortByPriority()
+                    true
+                }
+                "Sort by Date" -> {
+                    sortByDate()
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
+    }
+
+    private fun sortByPriority() {
+        mTodoAdapter.sortByPriority()
+    }
+
+    private fun sortByDate() {
+        mTodoAdapter.sortByDate()
+    }
+
 }

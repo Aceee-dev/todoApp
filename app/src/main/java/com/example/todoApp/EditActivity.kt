@@ -146,16 +146,4 @@ class EditActivity : AppCompatActivity() {
         todo.completion_date = editTextDateTodo.text.toString()
         return todo
     }
-
-    private fun getDate(text: String): Date {
-        val df = SimpleDateFormat("dd-MM-yyyy")
-        lateinit var myDate: Date
-        try {
-            myDate = df.parse(text)
-            return myDate
-        } catch (e: ParseException) {
-            Log.e("EditActivity", "Parse Exception while parsing text")
-        }
-        return myDate
-    }
 }

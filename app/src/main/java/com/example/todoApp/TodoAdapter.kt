@@ -1,12 +1,21 @@
 package com.example.todoApp
 
 import android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
+import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_todo.view.*
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Calendar
+import java.util.Date
 
 
 class TodoAdapter(
@@ -92,5 +101,31 @@ class TodoAdapter(
 
     override fun getItemCount(): Int {
         return todos.size
+    }
+
+    fun sortByPriority() {
+        todos.sortBy { it.priority }
+        notifyDataSetChanged()
+    }
+
+    fun sortByDate() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            todos.sortBy { getDate(it.completion_date) }
+            notifyDataSetChanged()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getDate(text: String): Date {
+        val df = SimpleDateFormat("dd/MM/yyyy")
+        val localDate = LocalDate.now()
+        var myDate: Date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+        try {
+            myDate = df.parse(text)
+            return myDate
+        } catch (e: ParseException) {
+            Log.e("TodoAdapter", "Parse Exception while parsing text")
+        }
+        return myDate
     }
 }

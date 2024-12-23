@@ -36,9 +36,13 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
     fun getAllTodos() {
         viewModelScope.launch {
             mtodoRepository.getAllTodos().collect { todos ->
-                _allResults.value = todos
+               updateAllResult(todos)
             }
         }
+    }
+
+    fun updateAllResult(todos:MutableList<Todo>) {
+        _allResults.value = todos
     }
 
     fun searchTodos(query:String) {
