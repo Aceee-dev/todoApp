@@ -12,6 +12,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_edit.*
@@ -52,13 +53,25 @@ class EditActivity : AppCompatActivity() {
             ): View {
                 val view: TextView =
                     super.getDropDownView(position, convertView, parent) as TextView
-                //set the color of first item in the drop down list to gray
-                if (position == 0) {
-                    view.setTextColor(Color.GRAY)
-                } else {
-                    //here it is possible to define color for other items by
-                    view.setTextColor(Color.BLACK)
+                // Define colors for each priority level
+                val backgroundColor = when (position) {
+                    0 -> Color.LTGRAY // First item is a placeholder
+                    1 -> ContextCompat.getColor(context, R.color.priority_color_high)
+                    2 -> ContextCompat.getColor(context, R.color.priority_color_medium_high)
+                    3 -> ContextCompat.getColor(context, R.color.priority_color_medium)
+                    4 -> ContextCompat.getColor(context, R.color.priority_color_low)
+                    5 -> ContextCompat.getColor(context, R.color.priority_color_very_low)
+                    else -> Color.WHITE // Default background
                 }
+
+                // Set the background color
+                view.setBackgroundColor(backgroundColor)
+
+                // Set the text color (first item gray, others black)
+                view.setTextColor(if (position == 0) Color.GRAY else Color.BLACK)
+
+                // Optional: Adjust padding to make it visually appealing
+                view.setPadding(16, 16, 16, 16)
                 return view
             }
 

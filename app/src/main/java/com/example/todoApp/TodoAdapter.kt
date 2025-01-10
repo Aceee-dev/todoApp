@@ -93,6 +93,14 @@ class TodoAdapter(
                 toggleCompleteStatus(tvTodoTitle, tvTodoComplDate, tvTodoPriority,tvTodoDescription, isChecked)
                 curTodo.isChecked = !curTodo.isChecked
             }
+            val priorityColor = when (curTodo.priority) {
+                1 -> R.color.priority_color_high
+                2 -> R.color.priority_color_medium_high
+                3 -> R.color.priority_color_medium
+                4 -> R.color.priority_color_low
+                else -> R.color.priority_color_very_low
+            }
+            priorityStrip.setBackgroundResource(priorityColor)
         }
         holder.itemView.setOnClickListener {
             listener.onItemClick(curTodo)

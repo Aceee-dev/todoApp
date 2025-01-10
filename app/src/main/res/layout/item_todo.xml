@@ -4,14 +4,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp"
     android:background="@drawable/bg_todo_card"
     android:layout_margin="8dp"
     android:elevation="4dp"
     android:clipToOutline="true">
+
+    <!-- Priority Strip -->
+    <View
+        android:id="@+id/priorityStrip"
+        android:layout_width="8dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_priority_strip"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tvTodoTitle"
@@ -24,8 +31,8 @@
         android:fontFamily="@font/roboto_bold"
         app:layout_constraintBottom_toTopOf="@id/tvTodoDescription"
         app:layout_constraintEnd_toStartOf="@+id/cbTodoDone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/priorityStrip"/>
 
     <TextView
         android:id="@+id/tvTodoDescription"
@@ -40,8 +47,8 @@
         android:maxLines="2"
         app:layout_constraintBottom_toTopOf="@id/tvTodoComplDate"
         app:layout_constraintEnd_toStartOf="@+id/cbTodoDone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTodoTitle" />
+        app:layout_constraintTop_toBottomOf="@id/tvTodoTitle"
+        app:layout_constraintStart_toEndOf="@id/priorityStrip"/>
 
     <TextView
         android:id="@+id/tvTodoComplDate"
@@ -54,7 +61,7 @@
         android:fontFamily="@font/roboto_regular"
         app:layout_constraintBottom_toTopOf="@id/tvTodoPriority"
         app:layout_constraintEnd_toStartOf="@+id/cbTodoDone"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/priorityStrip"/>
 
     <TextView
         android:id="@+id/tvTodoPriority"
@@ -67,7 +74,7 @@
         android:fontFamily="@font/roboto_regular"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/cbTodoDone"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/priorityStrip"/>
 
     <CheckBox
         android:id="@+id/cbTodoDone"

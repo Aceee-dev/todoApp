@@ -14,4 +14,9 @@
     <color name="dark_gray">#555555</color>
     <color name="primary">#FF4081</color>
     <color name="blue_variant">#AACCEE</color>
+    <color name="priority_color_high">#FF0000</color> <!-- Bright Red -->
+    <color name="priority_color_medium_high">#FF6347</color> <!-- Tomato Red -->
+    <color name="priority_color_medium">#FF7F50</color> <!-- Coral -->
+    <color name="priority_color_low">#FFA07A</color> <!-- Light Salmon -->
+    <color name="priority_color_very_low">#FFDAB9</color> <!-- Peach Puff -->
 </resources>
